@@ -3,8 +3,21 @@ import local from "passport-local";
 import userDao from "../dao/mongoDao/user.dao.mjs";
 import { createHash, isValidPassword } from "../utils/bcrypt.mjs";
 import GitHubStrategy from "passport-github2";
+import jwt from "passport-jwt";
+
+const PRIVATE_KEY = "CoderKeyQueFuncionaComoUnSecret";
 
 const localStrategy = local.Strategy;
+const JWTStrategy = jwt.Strategy;
+const ExtractJWT = jwt.ExtractJwt;
+
+const cookieExtractor = (req) => {
+  let token = null;
+  if (req && req.cookies) {
+    token = req.cookies["coderCookieToken"];
+  }
+  return token;
+};
 
 const initializePassport = () => {
   passport.use(
@@ -98,6 +111,23 @@ const initializePassport = () => {
         } catch (error) {
           console.error("Error during login:", error);
           return done(error); // Pass the error to Passport
+        }
+      },
+    ),
+  );
+
+  passport.use(
+    "jwt",
+    new JWTStrategy(
+      {
+        jwtFromRequest: ExtractJWT.fromExtractors([cookieExtractor]),
+        secretOrKey: PRIVATE_KEY,
+      },
+      async (jwt_payload, done) => {
+        try {
+          return done(null, jwt_payload);
+        } catch (error) {
+          return done(error);
         }
       },
     ),

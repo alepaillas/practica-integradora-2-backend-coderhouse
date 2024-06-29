@@ -1,5 +1,12 @@
 import { Router } from "express";
 import passport from "passport";
+import { generateToken, verifyToken } from "../utils/jwt.mjs";
+import {
+  passportCall,
+  authorization,
+} from "../middlewares/passport.middleware.mjs";
+import userDao from "../dao/mongoDao/user.dao.mjs";
+import { isValidPassword } from "../utils/bcrypt.mjs";
 
 const router = Router();
 
@@ -111,6 +118,50 @@ router.get(
     }
   },
 );
+
+/* 
+router.get(
+  "/current",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    res.send(req.user);
+  },
+);
+ */
+
+router.get(
+  "/current",
+  passportCall("jwt"),
+  authorization("user"),
+  (req, res) => {
+    try {
+      return res.status(200).json({ status: "success", payload: req.user });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ status: "Error", msg: "Internal Server Error" });
+    }
+  },
+);
+
+router.post("/jwt", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await userDao.getByEmail(email);
+    if (!user || !isValidPassword(user, password)) {
+      return res
+        .status(401)
+        .json({ status: "error", msg: "usuario o contraseña no válido" });
+    }
+
+    const token = generateToken(user);
+    res.cookie("coderCookieToken", token, { httpOnly: true });
+    return res.status(200).json({ status: "success", payload: user, token });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ status: "Error", msg: "Internal Server Error" });
+  }
+});
 
 router.get("/logout", async (req, res) => {
   try {
