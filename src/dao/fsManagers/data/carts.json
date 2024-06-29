@@ -1,0 +1,32 @@
+[
+  {
+    "id": "d108dd02-2cdd-44f3-98e0-ddc62e6a3f7e",
+    "products": [
+      {
+        "id": "dba2aae2-f9fa-4911-a997-ffab0d79833c",
+        "quantity": 2
+      },
+      {
+        "id": "454252ed-f736-48eb-bcd7-571a8456ceee",
+        "quantity": 1
+      },
+      {
+        "id": "1e5ce7e5-ad68-45b1-a7c4-54fa7ef0a6a2",
+        "quantity": 1
+      }
+    ]
+  },
+  {
+    "id": "bb861d8d-7aed-42b2-a3ff-07a48e7f304d",
+    "products": [
+      {
+        "id": "dba2aae2-f9fa-4911-a997-ffab0d79833c",
+        "quantity": 1
+      },
+      {
+        "id": "3e13b830-d9af-48b1-8d16-c9ca781aed0c",
+        "quantity": 3
+      }
+    ]
+  }
+]
